@@ -1,0 +1,34 @@
+---
+- name: Copy {{ travis_repo_name }} docker image
+  copy:
+    src: "{{ travis_repo_name }}.tar"
+    dest: "/tmp/{{ travis_repo_name }}.tar"
+
+- name: Load {{ travis_repo_name }} docker image
+  docker_image:
+    force: true
+    name: "{{ travis_repo_name }}"
+    load_path: /tmp/{{ travis_repo_name }}.tar
+
+- name: Start {{ travis_repo_name }} docker container
+  docker_container:
+    state: started
+    image: "{{ travis_repo_name }}:{{ travis_build_number }}"
+    name: "{{ travis_repo_name }}"
+    hostname: "{{ travis_repo_name }}"
+    restart: true
+    restart_policy: unless-stopped
+    purge_networks: true
+    networks:
+      - name: traefik
+    # exposed_ports:
+    #   - "80"
+    labels:
+      traefik.docker.network: "traefik" # todo: check if "web" is default network
+      traefik.port: "80"
+      traefik.protocol: "http"
+      traefik.enable: "true"
+      traefik.acme.domains: "{{ travis_repo_name }}"
+      traefik.frontend.rule: "Host:{{ travis_repo_name }}"
+      traefik.frontend.entryPoints: "https"
+      traefik.frontend.passHostHeader: "true"
