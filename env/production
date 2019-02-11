@@ -1,0 +1,7 @@
+[kimsufi]
+ns311372.ip-188-165-197.eu
+
+[kimsufi:vars]
+ansible_python_interpreter=/usr/bin/python3
+ansible_become=true
+ansible_become_user=root
