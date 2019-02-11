@@ -1,0 +1,37 @@
+language: python
+if: tag IS blank
+git:
+  depth: 1
+cache: pip
+services:
+- docker
+env:
+  global:
+  - ANSIBLE_HOST_KEY_CHECKING=False
+  - TRAVIS_REPO_OWNER=${TRAVIS_REPO_SLUG%/*}
+  - TRAVIS_REPO_NAME=${TRAVIS_REPO_SLUG#*/}
+python:
+- '3.6'
+branches:
+  only:
+  - master
+addons:
+  apt:
+    packages:
+    - sshpass
+install:
+- pip install ansible
+script:
+- docker build --tag ${TRAVIS_REPO_NAME}:${TRAVIS_BUILD_NUMBER} ${PWD}
+- docker images
+- docker save -o ${TRAVIS_REPO_NAME}.tar ${TRAVIS_REPO_NAME}:${TRAVIS_BUILD_NUMBER}
+- ls -lh
+- ansible-playbook --extra-vars="travis_commit=${TRAVIS_COMMIT} travis_repo_name=${ } travis_build_number=${TRAVIS_BUILD_NUMBER} ansible_user=${SSH_USER} ansible_password=${SSH_PASSWORD}" -i env/production site.yml
+deploy:
+  provider: releases
+  file: ${TRAVIS_REPO_NAME}.tar
+  skip_cleanup: true
+  api_key: $GITHUB_API_KEY
+  on:
+    repo: ivoputzer/xpug.city
+    branch: master
