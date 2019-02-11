@@ -1,0 +1,7 @@
+node_modules/
+www/*
+!www/favicon.*
+*.DS_Store
+*.tgz
+*.log
+todo.md
