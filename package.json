@@ -1,0 +1,49 @@
+{
+  "name": "xpug.city",
+  "version": "0.0.0-private",
+  "private": true,
+  "main": "run",
+  "config": {
+    "static_root": "www",
+    "virtual_port": 80
+  },
+  "scripts": {
+    "node": "node",
+    "styl": "stylus app/index.styl --out www/min.css --hoist-atrules --resolve-url --compress",
+    "js": "browserify app/index.js --outfile www/min.js --debug",
+    "pug": "pug app/index.pug --no-debug --obj package.json --out www",
+    "test": "m.test test/**",
+    "start": "node ${npm_package_main}",
+    "build": "docker images --quiet --filter=dangling=true | xargs docker rmi; docker build --rm --no-cache --tag ${npm_package_name} ${PWD}",
+    "docker": "docker ps --all --quiet --filter name=${npm_package_name} | xargs docker rm; docker run --name ${npm_package_name} -p 80:80 -it ${npm_package_name}",
+    "postinstall": "npm run styl; npm run js; npm run pug"
+  },
+  "standard": {
+    "ignore": [
+      "www/**"
+    ],
+    "globals": [
+      "test"
+    ]
+  },
+  "dependencies": {
+    "connect": "^3.6.6",
+    "morgan": "^1.9.1",
+    "serve-static": "^1.13.2"
+  },
+  "devDependencies": {
+    "browserify": "^16.2.3",
+    "m.test": "0.0.57",
+    "pug": "^2.0.3",
+    "pug-cli": "^1.0.0-alpha6",
+    "stylus": "^0.54.5",
+    "uglify-js": "^3.4.9"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ivoputzer/xpug.city.git"
+  },
+  "bugs": {
+    "url": "https://github.com/ivoputzer/xpug.city/issues"
+  }
+}
