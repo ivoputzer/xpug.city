@@ -26,7 +26,7 @@ script:
 - docker images
 - docker save -o ${TRAVIS_REPO_NAME}.tar ${TRAVIS_REPO_NAME}:${TRAVIS_BUILD_NUMBER}
 - ls -lh
-- ansible-playbook --extra-vars="travis_commit=${TRAVIS_COMMIT} travis_repo_name=${ } travis_build_number=${TRAVIS_BUILD_NUMBER} ansible_user=${SSH_USER} ansible_password=${SSH_PASSWORD}" -i env/production site.yml
+- ansible-playbook --extra-vars="travis_commit=${TRAVIS_COMMIT} travis_repo_name=${TRAVIS_REPO_NAME} travis_build_number=${TRAVIS_BUILD_NUMBER} ansible_user=${SSH_USER} ansible_password=${SSH_PASSWORD}" -i env/production site.yml
 deploy:
   provider: releases
   file: ${TRAVIS_REPO_NAME}.tar
